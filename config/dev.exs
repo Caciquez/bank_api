@@ -1,14 +1,5 @@
 use Mix.Config
 
-# Configure your database
-config :bank_api, BankApi.Repo,
-  username: "postgres",
-  password: "postgres",
-  database: "bank_api_dev",
-  hostname: "localhost",
-  show_sensitive_data_on_connection_error: true,
-  pool_size: 10
-
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
@@ -55,3 +46,5 @@ config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
+
+import_config "db/#{Mix.env()}.secret.exs"
