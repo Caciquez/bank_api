@@ -5,7 +5,14 @@ defmodule BankApiWeb.Router do
     plug(:accepts, ["json"])
   end
 
-  scope "/api", BankApiWeb do
+  pipeline :authenticated do
+    plug(BankApi.Guardian.AuthAccessPipeline)
+  end
+
+  scope "/api/v1", BankApiWeb do
     pipe_through(:api)
+
+    post("/register", UserController, :create)
+    post("/auth", UserController, :login)
   end
 end
