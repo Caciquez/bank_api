@@ -24,6 +24,7 @@ defmodule BankApi.Transactions do
       ** (Ecto.NoResultsError)
 
   """
+  @spec get_transaction!(number()) :: {:ok, Transaction.t()} | nil
   def get_transaction!(id), do: Repo.get!(Transaction, id)
 
   @doc """
@@ -38,41 +39,11 @@ defmodule BankApi.Transactions do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec create_transaction(map()) :: {:ok, Transaction.t()} | {:error, map()}
   def create_transaction(attrs \\ %{}) do
     %Transaction{}
     |> Transaction.changeset(attrs)
     |> Repo.insert()
-  end
-
-  @doc """
-  Updates a transaction.
-
-  ## Examples
-
-      iex> update_transaction(transaction, %{field: new_value})
-      {:ok, %Transaction{}}
-
-      iex> update_transaction(transaction, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_transaction(%Transaction{} = transaction, attrs) do
-    transaction
-    |> Transaction.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking transaction changes.
-
-  ## Examples
-
-      iex> change_transaction(transaction)
-      %Ecto.Changeset{source: %Transaction{}}
-
-  """
-  def change_transaction(%Transaction{} = transaction) do
-    Transaction.changeset(transaction, %{})
   end
 
   @spec execute_transaction(map(), BankApi.Accounts.BillingAccount.t()) :: Transaction.t()
@@ -105,11 +76,7 @@ defmodule BankApi.Transactions do
     with {:ok, :valid} <- validate_balance_value(billing_account.balance, value),
          {:ok, %BillingAccount{}} <-
            Accounts.update_billing_account(billing_account, %{
-             balance:
-               Decimal.sub(
-                 billing_account.balance,
-                 Decimal.new(value)
-               )
+             balance: calculate_withdraw(billing_account.balance, value)
            }) do
       new_transaction_attrs =
         Map.merge(transaction_params, %{
@@ -130,11 +97,7 @@ defmodule BankApi.Transactions do
     with {:ok, :valid} <- validate_deposit_value(value),
          {:ok, %BillingAccount{}} <-
            Accounts.update_billing_account(billing_account, %{
-             balance:
-               Decimal.add(
-                 billing_account.balance,
-                 Decimal.new(value)
-               )
+             balance: calculate_deposit(billing_account.balance, value)
            }) do
       new_transaction_attrs =
         Map.merge(transaction_params, %{
@@ -154,11 +117,11 @@ defmodule BankApi.Transactions do
         ) ::
           {:ok, Transaction.t()}
           | {:error, any}
-  def transfer_operation(
-        source_billing_account,
-        destination_billing_account,
-        transaction_params
-      ) do
+  defp transfer_operation(
+         source_billing_account,
+         destination_billing_account,
+         transaction_params
+       ) do
     source_account_changeset =
       BillingAccount.changeset(source_billing_account, %{
         balance:
@@ -193,6 +156,9 @@ defmodule BankApi.Transactions do
     |> validate_transfer_operation()
   end
 
+  @spec validate_transfer_operation(map()) ::
+          {:ok, Transaction.t()}
+          | {:error, any}
   defp validate_transfer_operation(transaction) do
     case transaction do
       {:ok,
@@ -208,6 +174,7 @@ defmodule BankApi.Transactions do
     end
   end
 
+  @spec validate_deposit_value(number()) :: {:ok, atom()} | {:error, atom()}
   defp validate_deposit_value(transaction_value)
        when transaction_value <= 0,
        do: {:error, :invalid_transaction_value}
@@ -216,6 +183,7 @@ defmodule BankApi.Transactions do
        when transaction_value > 0,
        do: {:ok, :valid}
 
+  @spec validate_balance_value(number(), number()) :: {:ok, atom()} | {:error, atom()}
   defp validate_balance_value(balance_value, transaction_value)
        when transaction_value > balance_value,
        do: {:ok, :invalid_balance_value}
@@ -223,4 +191,8 @@ defmodule BankApi.Transactions do
   defp validate_balance_value(balance_value, transaction_value)
        when balance_value > transaction_value,
        do: {:ok, :valid}
+
+  defp calculate_deposit(balance, value), do: Decimal.add(balance, Decimal.new(value))
+
+  defp calculate_withdraw(balance, value), do: Decimal.sub(balance, Decimal.new(value))
 end

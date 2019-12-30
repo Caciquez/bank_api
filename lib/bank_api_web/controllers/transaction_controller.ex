@@ -3,17 +3,10 @@ defmodule BankApiWeb.TransactionController do
 
   alias BankApi.Accounts
   alias BankApi.Accounts.BillingAccount
-  alias BankApi.Customers.User
-  alias BankApi.Guardian.Plug
   alias BankApi.Transactions
   alias BankApi.Transactions.Transaction
 
   action_fallback(BankApiWeb.FallbackController)
-
-  def index(conn, _params) do
-    transactions = Transactions.list_transactions()
-    render(conn, "index.json", transactions: transactions)
-  end
 
   def create(conn, %{"transaction" => transaction_params}) do
     with %BillingAccount{} = billing_account <-

@@ -7,6 +7,7 @@ defmodule BankApi.Factory do
 
   use BankApi.{
     UserFactory,
-    BillingAccountFactory
+    BillingAccountFactory,
+    TransactionFactory
   }
 end

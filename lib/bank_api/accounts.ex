@@ -22,6 +22,7 @@ defmodule BankApi.Accounts do
       ** (Ecto.NoResultsError)
 
   """
+  @spec get_billing_account!(number()) :: {:ok, BillingAccount.t()} | {:error, any}
   def get_billing_account!(id), do: Repo.get!(BillingAccount, id)
 
   @doc """
@@ -36,6 +37,7 @@ defmodule BankApi.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec create_billing_account(map()) :: {:ok, BillingAccount.t()} | {:error, any}
   def create_billing_account(attrs \\ %{}) do
     %BillingAccount{}
     |> BillingAccount.changeset(attrs)
@@ -54,12 +56,16 @@ defmodule BankApi.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec update_billing_account(BillingAccount.t(), map()) ::
+          {:ok, BillingAccount.t()} | {:error, any}
   def update_billing_account(%BillingAccount{} = billing_account, attrs) do
     billing_account
     |> BillingAccount.changeset(attrs)
     |> Repo.update()
   end
 
+  @spec get_billing_account_by_code(charlist()) ::
+          {:error, :not_found} | BillingAccount.t()
   def get_billing_account_by_code(code) do
     query = from(ba in BillingAccount, where: ba.code == ^code)
 
@@ -72,6 +78,8 @@ defmodule BankApi.Accounts do
     end
   end
 
+  @spec create_user_and_billing_account(map()) ::
+          {:error, any} | {:ok, BillingAccount.t(), User.t()}
   def create_user_and_billing_account(user_params) do
     Multi.new()
     |> Multi.insert(:user, User.changeset(%User{}, user_params))
@@ -82,6 +90,7 @@ defmodule BankApi.Accounts do
     |> validate_user_billing_account_transaction()
   end
 
+  @spec billing_acount_user_relation_multi(number()) :: Multi.t()
   defp billing_acount_user_relation_multi(user_id) do
     Multi.new()
     |> Multi.insert(
@@ -93,6 +102,8 @@ defmodule BankApi.Accounts do
     )
   end
 
+  @spec billing_acount_user_relation_multi(Multi.t()) ::
+          {:ok, BillingAccount.t(), User.t()} | {:error, any}
   defp validate_user_billing_account_transaction(transaction) do
     case transaction do
       {:ok, %{billing_account: billing_account, user: user}} ->

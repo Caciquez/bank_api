@@ -28,6 +28,6 @@ defmodule BankApi.Transactions.Transaction do
   def changeset(%Transaction{} = transaction, attrs) do
     transaction
     |> cast(attrs, @required_fields ++ @optional_fields)
-    |> validate_required(@required_fields)
+    |> validate_required(@required_fields, message: "Dado obrigatório")
   end
 end

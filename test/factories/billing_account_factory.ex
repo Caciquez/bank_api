@@ -8,7 +8,7 @@ defmodule BankApi.BillingAccountFactory do
         %BillingAccount{
           balance: 1000,
           code: UUID.v4(),
-          user_id: build(:user).id
+          user: build(:user)
         }
       end
     end
