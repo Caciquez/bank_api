@@ -8,9 +8,8 @@ defmodule BankApi.Accounts.BillingAccount do
   schema "billing_accounts" do
     field(:balance, :decimal, null: false, default: 1000)
     field(:code, Ecto.UUID, null: false)
-    field(:user_id, :id)
 
-    belongs_to(:users, User)
+    belongs_to(:user, User)
 
     timestamps()
   end

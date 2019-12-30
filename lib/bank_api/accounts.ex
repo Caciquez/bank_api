@@ -60,6 +60,18 @@ defmodule BankApi.Accounts do
     |> Repo.update()
   end
 
+  def get_billing_account_by_code(code) do
+    query = from(ba in BillingAccount, where: ba.code == ^code)
+
+    case Repo.one(query) do
+      %BillingAccount{} = billing_account ->
+        billing_account
+
+      _ ->
+        {:error, :not_found}
+    end
+  end
+
   def create_user_and_billing_account(user_params) do
     Multi.new()
     |> Multi.insert(:user, User.changeset(%User{}, user_params))

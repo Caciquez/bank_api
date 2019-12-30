@@ -56,7 +56,8 @@ defmodule BankApi.MixProject do
       {:bcrypt_elixir, "~> 2.0.3"},
       {:guardian, "~> 2.0"},
       {:phoenix_swagger, "~> 0.8"},
-      {:ex_json_schema, "~> 0.5"}
+      {:ex_json_schema, "~> 0.5"},
+      {:exnumerator, "~> 1.6"}
     ]
   end
 

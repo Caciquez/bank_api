@@ -14,5 +14,9 @@ defmodule BankApiWeb.Router do
 
     post("/register", UserController, :create)
     post("/auth", UserController, :login)
+
+    pipe_through(:authenticated)
+
+    resources("/transactions", TransactionController, only: [:create, :index, :show])
   end
 end
