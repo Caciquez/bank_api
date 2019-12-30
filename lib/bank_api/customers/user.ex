@@ -1,6 +1,7 @@
 defmodule BankApi.Customers.User do
   use Ecto.Schema
   import Ecto.Changeset
+  alias BankApi.Accounts.BillingAccount
   alias BankApi.Customers.User
 
   @registration_required_fields ~w(name email email_confirmation password password_confirmation)a
@@ -12,6 +13,8 @@ defmodule BankApi.Customers.User do
     field(:password, :string, virtual: true)
     field(:password_confirmation, :string, virtual: true)
     field(:encrypted_password, :string, null: false)
+
+    has_many(:billing_accounts, BillingAccount)
 
     timestamps()
   end

@@ -52,7 +52,7 @@ defmodule BankApi.CustomersTest do
                })
                |> Customers.create_user()
 
-      assert %{email: ["Formato válido: deve possuir @ e .com"]} = errors_on(changeset)
+      assert %{email: ["Formato inválido: deve possuir @ e .com"]} = errors_on(changeset)
     end
 
     test "does not create a user when email already exists" do

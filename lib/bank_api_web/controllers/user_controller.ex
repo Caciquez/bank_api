@@ -1,6 +1,8 @@
 defmodule BankApiWeb.UserController do
   use BankApiWeb, :controller
 
+  alias BankApi.Accounts
+  alias BankApi.Accounts.BillingAccount
   alias BankApi.Customers
   alias BankApi.Customers.User
   alias BankApi.Guardian
@@ -9,7 +11,8 @@ defmodule BankApiWeb.UserController do
 
   @spec create(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def create(conn, %{"user" => user_params}) do
-    with {:ok, %User{} = user} <- Customers.create_user(user_params),
+    with {:ok, %BillingAccount{} = _billing_account, %User{} = user} <-
+           Accounts.create_user_and_billing_account(user_params),
          {:ok, token, _} <-
            Guardian.encode_and_sign(user) do
       render(conn, "show.json", user: Map.put(user, :token, token))

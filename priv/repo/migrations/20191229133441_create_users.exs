@@ -3,9 +3,9 @@ defmodule BankApi.Repo.Migrations.CreateUsers do
 
   def change do
     create table(:users) do
-      add(:name, :string)
-      add(:email, :string)
-      add(:encrypted_password, :string)
+      add(:name, :string, null: false)
+      add(:email, :string, null: false)
+      add(:encrypted_password, :string, null: false)
 
       timestamps()
     end
