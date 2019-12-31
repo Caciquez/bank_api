@@ -15,6 +15,13 @@ defmodule BankApi.Transactions.Transaction do
     use Exnumerator, values: ["deposit", "withdraw", "transfer"]
   end
 
+  @derive {Jason.Encoder,
+           except: [
+             :__meta__,
+             :__struct__,
+             :source_billing_account,
+             :destination_billing_account
+           ]}
   schema "transactions" do
     field(:type, Type, null: false)
     field(:value, :decimal, null: false)

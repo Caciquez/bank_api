@@ -17,6 +17,7 @@ defmodule BankApiWeb.Router do
 
     pipe_through(:authenticated)
 
-    resources("/transactions", TransactionController, only: [:create, :index, :show])
+    resources("/transactions", TransactionController, only: [:create, :show])
+    post("/transactions/report", TransactionController, :report)
   end
 end

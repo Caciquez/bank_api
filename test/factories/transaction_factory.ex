@@ -12,12 +12,12 @@ defmodule BankApi.TransactionFactory do
         }
       end
 
-      def withdrawal_factory do
+      def withdraw_factory do
         %Transaction{
           value: 10_000,
           source_billing_account: insert(:billing_account),
           destination_billing_account: insert(:billing_account),
-          type: "withdrawal"
+          type: "withdraw"
         }
       end
 

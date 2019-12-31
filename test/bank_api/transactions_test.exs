@@ -7,7 +7,7 @@ defmodule BankApi.TransactionsTest do
   @valid_attrs %{type: "deposit", value: "120.5"}
   @invalid_attrs %{type: nil, value: nil}
 
-  describe "get_transaction/1" do
+  describe "get_transaction!/1" do
     test "returns the transaction with given id when it exists" do
       transaction = insert(:deposit)
 
@@ -141,6 +141,32 @@ defmodule BankApi.TransactionsTest do
       assert_raise Ecto.ConstraintError, fn ->
         Transactions.execute_transaction(transfer_params, source_billing_account)
       end
+    end
+  end
+
+  describe "generate_report/1" do
+    test "returns tuple with list of transactions and the sum of their values" do
+      transaction1 = insert(:deposit)
+      transaction2 = insert(:withdraw)
+      transaction3 = insert(:transfer)
+
+      report_params = %{
+        "day" => 10,
+        "month" => 12,
+        "year" => 2019
+      }
+
+      sum_values =
+        Decimal.add(
+          transaction3.value,
+          Decimal.add(transaction1.value, transaction2.value)
+        )
+
+      {total_values, transactions} = Transactions.generate_report(report_params)
+      [first_transaction | _] = transactions
+
+      assert sum_values == total_values
+      assert first_transaction.id == transaction1.id
     end
   end
 end

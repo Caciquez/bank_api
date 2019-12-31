@@ -46,6 +46,22 @@ defmodule BankApi.Transactions do
     |> Repo.insert()
   end
 
+  @spec generate_report(map()) :: {[Transaction.t()], float()}
+  def generate_report(%{"day" => day, "month" => month, "year" => year}) do
+    query =
+      from(
+        t in Transaction,
+        where:
+          t.inserted_at > ago(^day, "day") and t.inserted_at > ago(^month, "month") and
+            t.inserted_at > ago(^year, "year")
+      )
+
+    {
+      Repo.aggregate(query, :sum, :value),
+      Repo.all(query)
+    }
+  end
+
   @spec execute_transaction(map(), BankApi.Accounts.BillingAccount.t()) :: Transaction.t()
   def execute_transaction(
         %{"type" => "transfer", "value" => value} = transaction_params,
@@ -192,7 +208,9 @@ defmodule BankApi.Transactions do
        when balance_value > transaction_value,
        do: {:ok, :valid}
 
+  @spec calculate_deposit(number(), number()) :: float()
   defp calculate_deposit(balance, value), do: Decimal.add(balance, Decimal.new(value))
 
+  @spec calculate_deposit(number(), number()) :: float()
   defp calculate_withdraw(balance, value), do: Decimal.sub(balance, Decimal.new(value))
 end
