@@ -117,6 +117,7 @@ To install all dependecies and configure your app follow:
   * To run Elixir tests with native elixir:
 
   ```
+  mix coveralls
   mix test
   ```
 
