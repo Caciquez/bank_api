@@ -111,9 +111,6 @@ To install all dependecies and configure your app follow:
   ```
   mix phx.server
   ```
-
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
-
 ## Running Tests
 
   * To run Elixir tests with native elixir:
@@ -122,10 +119,12 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
   mix test
   ```
 
-### Postman
+### Postman and Heroku
 
 Para utilizar os endpoints da aplicação com o postman, importe a collection pelo link https://www.getpostman.com/collections/9d43de74607f4889360a
 
 Para executar autenticações autenticadas na aba `Authorization` do postman selecione a opção `Baerer Token` em type e adicione o token retornado na requisição de login ou autenticação.
 
 Documentação da API no postman: https://documenter.getpostman.com/view/2765730/SWLbAqBD
+Heroku URL: https://bank-api-stone.herokuapp.com
+
