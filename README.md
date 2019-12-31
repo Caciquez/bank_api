@@ -19,6 +19,7 @@ docker-compose up --build
 2. Run the following command to execute the tests on docker enviroment
 
 ```bash
+docker-compose run web mix coveralls
 docker-compose run web mix test
 ```
 
