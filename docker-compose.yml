@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["./wait-postgres.sh", "postgres", "mix", "phx.server"]
+    environment:
+      - DB_HOSTNAME=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+    volumes:
+      - .:/app
+    ports:
+      - "4000:4000"
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:11.5
+    volumes:
+      - "./volumes:/var/lib/postgresql/data"
+    ports: 
+      - "5432:5432"
